@@ -169,7 +169,7 @@ instance IsOption CounterSet where
 -- Running benchmarks
 ----------------------------------------------------------------
 
--- | Just a 'TestTree'. This type synonym is provided for source compatibility with 
+-- | Just a 'TestTree'. This type synonym is provided for source compatibility with
 --   @criterion@ and @gauge@.
 --
 -- @since 0.1
@@ -193,17 +193,22 @@ instance IsTest Benchmarkable where
             -- trigger it. This could bias measurement a lot since we
             -- run bencmark only once
             performMajorGC
+            n1 <- getAllocationCounter
             -- Perform measurement
             call $ papi_start evt
             io
             call $ papi_stop evt vals
+            n2 <- getAllocationCounter
+            let n_alloc = fromIntegral $ n1-n2
             -- Read data
             measurements <- traverse (peekElemOff vals . fst) $ [0..] `zip` counters
             pure $ testPassed
-                 $ show measurements
-                ++ intercalate "\t" [ show c ++ ('=':showN n)
-                                    | (c,n) <- zip counters measurements
-                                    ]
+                 $ show (n_alloc:measurements)
+                ++ intercalate "\t"
+                     ( ("ALLOC="++showN n_alloc)
+                     : [ show c ++ ('=':showN n)
+                       | (c,n) <- zip counters measurements])
+
 
     | otherwise = pure $ testFailed
         "Benchmarks must not be run concurrently. Please pass -j1 or use single threaded runtime."
@@ -244,7 +249,7 @@ bgroup :: String -> [Benchmark] -> Benchmark
 bgroup = testGroup
 
 -- | @nf f x@ measures number of instructions needed to compute normal
---   form of and application of @f@ to @x@. 
+--   form of and application of @f@ to @x@.
 --
 -- @since 0.1
 nf :: NFData b => (a -> b) -> a -> Benchmarkable
@@ -310,7 +315,7 @@ csvReporter = TestReporter [Option (Proxy @(Maybe CsvPath)), Option (Proxy @Coun
                         ++ "' corresponds to two or more benchmarks. Please disambiguate them."
       withFile path WriteMode $ \h -> do
         hSetBuffering h LineBuffering
-        hPutStrLn h $ intercalate "," $ show <$> counters
+        hPutStrLn h $ intercalate "," $ "ALLOC" : (show <$> counters)
         csvOutput h $ IM.intersectionWith (,) namesMap smap
       pure $ \_ -> isSuccessful smap
 
