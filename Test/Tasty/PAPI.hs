@@ -66,11 +66,109 @@ newtype EventSet = EventSet CInt
 foreign import capi "papi.h value PAPI_OK"          papi_OK          :: CInt
 foreign import capi "papi.h value PAPI_NULL"        papi_NULL        :: CInt
 foreign import capi "papi.h value PAPI_VER_CURRENT" papi_VER_CURRENT :: CInt
-
-foreign import capi "papi.h value PAPI_TOT_INS" papi_TOT_INS :: CInt
-foreign import capi "papi.h value PAPI_FP_INS"  papi_FP_INS  :: CInt
-foreign import capi "papi.h value PAPI_BR_INS"  papi_BR_INS  :: CInt
-foreign import capi "papi.h value PAPI_BR_MSP"  papi_BR_MSP  :: CInt
+ 
+foreign import capi "papi.h value PAPI_L1_DCM"   papi_L1_DCM  :: CInt
+foreign import capi "papi.h value PAPI_L1_ICM"   papi_L1_ICM  :: CInt
+foreign import capi "papi.h value PAPI_L2_DCM"   papi_L2_DCM  :: CInt
+foreign import capi "papi.h value PAPI_L2_ICM"   papi_L2_ICM  :: CInt
+foreign import capi "papi.h value PAPI_L3_DCM"   papi_L3_DCM  :: CInt
+foreign import capi "papi.h value PAPI_L3_ICM"   papi_L3_ICM  :: CInt
+foreign import capi "papi.h value PAPI_L1_TCM"   papi_L1_TCM  :: CInt
+foreign import capi "papi.h value PAPI_L2_TCM"   papi_L2_TCM  :: CInt
+foreign import capi "papi.h value PAPI_L3_TCM"   papi_L3_TCM  :: CInt
+foreign import capi "papi.h value PAPI_CA_SNP"   papi_CA_SNP  :: CInt
+foreign import capi "papi.h value PAPI_CA_SHR"   papi_CA_SHR  :: CInt
+foreign import capi "papi.h value PAPI_CA_CLN"   papi_CA_CLN  :: CInt
+foreign import capi "papi.h value PAPI_CA_INV"   papi_CA_INV  :: CInt
+foreign import capi "papi.h value PAPI_CA_ITV"   papi_CA_ITV  :: CInt
+foreign import capi "papi.h value PAPI_L3_LDM"   papi_L3_LDM  :: CInt
+foreign import capi "papi.h value PAPI_L3_STM"   papi_L3_STM  :: CInt
+foreign import capi "papi.h value PAPI_BRU_IDL"  papi_BRU_IDL :: CInt
+foreign import capi "papi.h value PAPI_FXU_IDL"  papi_FXU_IDL :: CInt
+foreign import capi "papi.h value PAPI_FPU_IDL"  papi_FPU_IDL :: CInt
+foreign import capi "papi.h value PAPI_LSU_IDL"  papi_LSU_IDL :: CInt
+foreign import capi "papi.h value PAPI_TLB_DM"   papi_TLB_DM  :: CInt
+foreign import capi "papi.h value PAPI_TLB_IM"   papi_TLB_IM  :: CInt
+foreign import capi "papi.h value PAPI_TLB_TL"   papi_TLB_TL  :: CInt
+foreign import capi "papi.h value PAPI_L1_LDM"   papi_L1_LDM  :: CInt
+foreign import capi "papi.h value PAPI_L1_STM"   papi_L1_STM  :: CInt
+foreign import capi "papi.h value PAPI_L2_LDM"   papi_L2_LDM  :: CInt
+foreign import capi "papi.h value PAPI_L2_STM"   papi_L2_STM  :: CInt
+foreign import capi "papi.h value PAPI_BTAC_M"   papi_BTAC_M  :: CInt
+foreign import capi "papi.h value PAPI_PRF_DM"   papi_PRF_DM  :: CInt
+foreign import capi "papi.h value PAPI_L3_DCH"   papi_L3_DCH  :: CInt
+foreign import capi "papi.h value PAPI_TLB_SD"   papi_TLB_SD  :: CInt
+foreign import capi "papi.h value PAPI_CSR_FAL"  papi_CSR_FAL :: CInt
+foreign import capi "papi.h value PAPI_CSR_SUC"  papi_CSR_SUC :: CInt
+foreign import capi "papi.h value PAPI_CSR_TOT"  papi_CSR_TOT :: CInt
+foreign import capi "papi.h value PAPI_MEM_SCY"  papi_MEM_SCY :: CInt
+foreign import capi "papi.h value PAPI_MEM_RCY"  papi_MEM_RCY :: CInt
+foreign import capi "papi.h value PAPI_MEM_WCY"  papi_MEM_WCY :: CInt
+foreign import capi "papi.h value PAPI_STL_ICY"  papi_STL_ICY :: CInt
+foreign import capi "papi.h value PAPI_FUL_ICY"  papi_FUL_ICY :: CInt
+foreign import capi "papi.h value PAPI_STL_CCY"  papi_STL_CCY :: CInt
+foreign import capi "papi.h value PAPI_FUL_CCY"  papi_FUL_CCY :: CInt
+foreign import capi "papi.h value PAPI_HW_INT"   papi_HW_INT  :: CInt
+foreign import capi "papi.h value PAPI_BR_UCN"   papi_BR_UCN  :: CInt
+foreign import capi "papi.h value PAPI_BR_CN"    papi_BR_CN   :: CInt
+foreign import capi "papi.h value PAPI_BR_TKN"   papi_BR_TKN  :: CInt
+foreign import capi "papi.h value PAPI_BR_NTK"   papi_BR_NTK  :: CInt
+foreign import capi "papi.h value PAPI_BR_MSP"   papi_BR_MSP  :: CInt
+foreign import capi "papi.h value PAPI_BR_PRC"   papi_BR_PRC  :: CInt
+foreign import capi "papi.h value PAPI_FMA_INS"  papi_FMA_INS :: CInt
+foreign import capi "papi.h value PAPI_TOT_IIS"  papi_TOT_IIS :: CInt
+foreign import capi "papi.h value PAPI_TOT_INS"  papi_TOT_INS :: CInt
+foreign import capi "papi.h value PAPI_INT_INS"  papi_INT_INS :: CInt
+foreign import capi "papi.h value PAPI_FP_INS"   papi_FP_INS  :: CInt
+foreign import capi "papi.h value PAPI_LD_INS"   papi_LD_INS  :: CInt
+foreign import capi "papi.h value PAPI_SR_INS"   papi_SR_INS  :: CInt
+foreign import capi "papi.h value PAPI_BR_INS"   papi_BR_INS  :: CInt
+foreign import capi "papi.h value PAPI_VEC_INS"  papi_VEC_INS :: CInt
+foreign import capi "papi.h value PAPI_RES_STL"  papi_RES_STL :: CInt
+foreign import capi "papi.h value PAPI_FP_STAL"  papi_FP_STAL :: CInt
+foreign import capi "papi.h value PAPI_TOT_CYC"  papi_TOT_CYC :: CInt
+foreign import capi "papi.h value PAPI_LST_INS"  papi_LST_INS :: CInt
+foreign import capi "papi.h value PAPI_SYC_INS"  papi_SYC_INS :: CInt
+foreign import capi "papi.h value PAPI_L1_DCH"   papi_L1_DCH  :: CInt
+foreign import capi "papi.h value PAPI_L2_DCH"   papi_L2_DCH  :: CInt
+foreign import capi "papi.h value PAPI_L1_DCA"   papi_L1_DCA  :: CInt
+foreign import capi "papi.h value PAPI_L2_DCA"   papi_L2_DCA  :: CInt
+foreign import capi "papi.h value PAPI_L3_DCA"   papi_L3_DCA  :: CInt
+foreign import capi "papi.h value PAPI_L1_DCR"   papi_L1_DCR  :: CInt
+foreign import capi "papi.h value PAPI_L2_DCR"   papi_L2_DCR  :: CInt
+foreign import capi "papi.h value PAPI_L3_DCR"   papi_L3_DCR  :: CInt
+foreign import capi "papi.h value PAPI_L1_DCW"   papi_L1_DCW  :: CInt
+foreign import capi "papi.h value PAPI_L2_DCW"   papi_L2_DCW  :: CInt
+foreign import capi "papi.h value PAPI_L3_DCW"   papi_L3_DCW  :: CInt
+foreign import capi "papi.h value PAPI_L1_ICH"   papi_L1_ICH  :: CInt
+foreign import capi "papi.h value PAPI_L2_ICH"   papi_L2_ICH  :: CInt
+foreign import capi "papi.h value PAPI_L3_ICH"   papi_L3_ICH  :: CInt
+foreign import capi "papi.h value PAPI_L1_ICA"   papi_L1_ICA  :: CInt
+foreign import capi "papi.h value PAPI_L2_ICA"   papi_L2_ICA  :: CInt
+foreign import capi "papi.h value PAPI_L3_ICA"   papi_L3_ICA  :: CInt
+foreign import capi "papi.h value PAPI_L1_ICR"   papi_L1_ICR  :: CInt
+foreign import capi "papi.h value PAPI_L2_ICR"   papi_L2_ICR  :: CInt
+foreign import capi "papi.h value PAPI_L3_ICR"   papi_L3_ICR  :: CInt
+foreign import capi "papi.h value PAPI_L1_ICW"   papi_L1_ICW  :: CInt
+foreign import capi "papi.h value PAPI_L2_ICW"   papi_L2_ICW  :: CInt
+foreign import capi "papi.h value PAPI_L3_ICW"   papi_L3_ICW  :: CInt
+foreign import capi "papi.h value PAPI_L1_TCH"   papi_L1_TCH  :: CInt
+foreign import capi "papi.h value PAPI_L2_TCH"   papi_L2_TCH  :: CInt
+foreign import capi "papi.h value PAPI_L3_TCH"   papi_L3_TCH  :: CInt
+foreign import capi "papi.h value PAPI_L1_TCA"   papi_L1_TCA  :: CInt
+foreign import capi "papi.h value PAPI_L2_TCA"   papi_L2_TCA  :: CInt
+foreign import capi "papi.h value PAPI_L3_TCA"   papi_L3_TCA  :: CInt
+foreign import capi "papi.h value PAPI_L1_TCR"   papi_L1_TCR  :: CInt
+foreign import capi "papi.h value PAPI_L2_TCR"   papi_L2_TCR  :: CInt
+foreign import capi "papi.h value PAPI_L3_TCR"   papi_L3_TCR  :: CInt
+foreign import capi "papi.h value PAPI_L1_TCW"   papi_L1_TCW  :: CInt
+foreign import capi "papi.h value PAPI_L2_TCW"   papi_L2_TCW  :: CInt
+foreign import capi "papi.h value PAPI_L3_TCW"   papi_L3_TCW  :: CInt
+foreign import capi "papi.h value PAPI_FML_INS"  papi_FML_INS :: CInt
+foreign import capi "papi.h value PAPI_FAD_INS"  papi_FAD_INS :: CInt
+foreign import capi "papi.h value PAPI_FDV_INS"  papi_FDV_INS :: CInt
+foreign import capi "papi.h value PAPI_FSQ_INS"  papi_FSQ_INS :: CInt
+foreign import capi "papi.h value PAPI_FNV_INS"  papi_FNV_INS :: CInt
 
 foreign import capi "papi.h PAPI_library_init"
   papi_library_init :: CInt -> IO CInt
@@ -119,19 +217,220 @@ withPapiEventSet action = do
         call $ papi_destroy_eventset p_evt
 
 -- | Supported hardware counters
+-- 
+-- Documentation is taken from rather outdated manual:
+-- https://icl.utk.edu/projects/papi/files/documentation/PAPI_USER_GUIDE_23.htm
 data Counter
-  = TOT_INS  -- ^ Total instruction count
-  | FP_INS   -- ^ Number of floating point instructions
-  | BR_INS   -- ^ Number of branch instructions
-  | BR_MSP   -- ^ Number of branch mispredictions
+  = L1_DCM  -- ^ Level 1 data cache misses
+  | L1_ICM  -- ^ Level 1 instruction cache misses
+  | L2_DCM  -- ^ Level 2 data cache misses
+  | L2_ICM  -- ^ Level 2 instruction cache misses
+  | L3_DCM  -- ^ Level 3 data cache misses
+  | L3_ICM  -- ^ Level 3 instruction cache misses
+  | L1_TCM  -- ^ Level 1 total cache misses
+  | L2_TCM  -- ^ Level 2 total cache misses
+  | L3_TCM  -- ^ Level 3 total cache misses
+  | CA_SNP  -- ^ Requests for a Snoop
+  | CA_SHR  -- ^ Requests for access to shared cache line (SMP)
+  | CA_CLN  -- ^ Requests for access to clean cache line (SMP)
+  | CA_INV  -- ^ Cache Line Invalidation (SMP)
+  | CA_ITV  -- ^ Cache Line Intervention (SMP)
+  | L3_LDM  -- ^ Level 3 load misses
+  | L3_STM  -- ^ Level 3 store misses
+  | BRU_IDL -- ^ Cycles branch units are idle
+  | FXU_IDL -- ^ Cycles integer units are idle
+  | FPU_IDL -- ^ Cycles floating point units are idle
+  | LSU_IDL -- ^ Cycles load/store units are idle
+  | TLB_DM  -- ^ Data translation lookaside buffer misses
+  | TLB_IM  -- ^ Instruction translation lookaside buffer misses
+  | TLB_TL  -- ^ Total translation lookaside buffer misses
+  | L1_LDM  -- ^ Level 1 load misses
+  | L1_STM  -- ^ Level 1 store misses
+  | L2_LDM  -- ^ Level 2 load misses
+  | L2_STM  -- ^ Level 2 store misses
+  | BTAC_M  -- ^ Branch target address cache (BTAC) misses
+  | PRF_DM  -- ^ Pre-fetch data instruction caused a miss
+  | L3_DCH  -- ^ Level 3 Data Cache Hit
+  | TLB_SD  -- ^ Translation lookaside buffer shootdowns (SMP)
+  | CSR_FAL -- ^ Failed store conditional instructions
+  | CSR_SUC -- ^ Successful store conditional instructions
+  | CSR_TOT -- ^ Total store conditional instructions
+  | MEM_SCY -- ^ Cycles Stalled Waiting for Memory Access
+  | MEM_RCY -- ^ Cycles Stalled Waiting for Memory Read
+  | MEM_WCY -- ^ Cycles Stalled Waiting for Memory Write
+  | STL_ICY -- ^ Cycles with No Instruction Issue
+  | FUL_ICY -- ^ Cycles with Maximum Instruction Issue
+  | STL_CCY -- ^ Cycles with No Instruction Completion
+  | FUL_CCY -- ^ Cycles with Maximum Instruction Completion
+  | HW_INT  -- ^ Hardware interrupts
+  | BR_UCN  -- ^ Unconditional branch instructions executed
+  | BR_CN   -- ^ Conditional branch instructions executed
+  | BR_TKN  -- ^ Conditional branch instructions taken
+  | BR_NTK  -- ^ Conditional branch instructions not taken
+  | BR_MSP  -- ^ Conditional branch instructions mispredicted
+  | BR_PRC  -- ^ Conditional branch instructions correctly predicted
+  | FMA_INS -- ^ FMA instructions completed
+  | TOT_IIS -- ^ Total instructions issued
+  | TOT_INS -- ^ Total instructions executed
+  | INT_INS -- ^ Integer instructions executed
+  | FP_INS  -- ^ Floating point instructions executed
+  | LD_INS  -- ^ Load instructions executed
+  | SR_INS  -- ^ Store instructions executed
+  | BR_INS  -- ^ Total branch instructions executed
+  | VEC_INS -- ^ Vector/SIMD instructions executed
+  | RES_STL -- ^ Cycles processor is stalled on resource
+  | FP_STAL -- ^ Cycles any FP units are stalled
+  | TOT_CYC -- ^ Total cycles
+  | LST_INS -- ^ Total load/store instructions executed
+  | SYC_INS -- ^ Synchronization instructions executed
+  | L1_DCH  -- ^ L1 data cache hits
+  | L2_DCH  -- ^ L2 data cache hits
+  | L1_DCA  -- ^ L1 data cache accesses
+  | L2_DCA  -- ^ L2 data cache accesses
+  | L3_DCA  -- ^ L3 data cache accesses
+  | L1_DCR  -- ^ L1 data cache reads
+  | L2_DCR  -- ^ L2 data cache reads
+  | L3_DCR  -- ^ L3 data cache reads
+  | L1_DCW  -- ^ L1 data cache writes
+  | L2_DCW  -- ^ L2 data cache writes
+  | L3_DCW  -- ^ L3 data cache writes
+  | L1_ICH  -- ^ L1 instruction cache hits
+  | L2_ICH  -- ^ L2 instruction cache hits
+  | L3_ICH  -- ^ L3 instruction cache hits
+  | L1_ICA  -- ^ L1 instruction cache accesses
+  | L2_ICA  -- ^ L2 instruction cache accesses
+  | L3_ICA  -- ^ L3 instruction cache accesses
+  | L1_ICR  -- ^ L1 instruction cache reads
+  | L2_ICR  -- ^ L2 instruction cache reads
+  | L3_ICR  -- ^ L3 instruction cache reads
+  | L1_ICW  -- ^ L1 instruction cache writes
+  | L2_ICW  -- ^ L2 instruction cache writes
+  | L3_ICW  -- ^ L3 instruction cache writes
+  | L1_TCH  -- ^ L1 total cache hits
+  | L2_TCH  -- ^ L2 total cache hits
+  | L3_TCH  -- ^ L3 total cache hits
+  | L1_TCA  -- ^ L1 total cache accesses
+  | L2_TCA  -- ^ L2 total cache accesses
+  | L3_TCA  -- ^ L3 total cache accesses
+  | L1_TCR  -- ^ L1 total cache reads
+  | L2_TCR  -- ^ L2 total cache reads
+  | L3_TCR  -- ^ L3 total cache reads
+  | L1_TCW  -- ^ L1 total cache writes
+  | L2_TCW  -- ^ L2 total cache writes
+  | L3_TCW  -- ^ L3 total cache writes
+  | FML_INS -- ^ Floating Multiply instructions
+  | FAD_INS -- ^ Floating Add instructions
+  | FDV_INS -- ^ Floating Divide instructions
+  | FSQ_INS -- ^ Floating Square Root instructions
+  | FNV_INS -- ^ Floating Inverse instructions
   deriving (Show,Read,Eq,Ord)
+
 
 toCounter :: Counter -> CInt
 toCounter = \case
-  TOT_INS -> papi_TOT_INS
-  FP_INS  -> papi_FP_INS
-  BR_INS  -> papi_BR_INS
+  L1_DCM  -> papi_L1_DCM
+  L1_ICM  -> papi_L1_ICM
+  L2_DCM  -> papi_L2_DCM
+  L2_ICM  -> papi_L2_ICM
+  L3_DCM  -> papi_L3_DCM
+  L3_ICM  -> papi_L3_ICM
+  L1_TCM  -> papi_L1_TCM
+  L2_TCM  -> papi_L2_TCM
+  L3_TCM  -> papi_L3_TCM
+  CA_SNP  -> papi_CA_SNP
+  CA_SHR  -> papi_CA_SHR
+  CA_CLN  -> papi_CA_CLN
+  CA_INV  -> papi_CA_INV
+  CA_ITV  -> papi_CA_ITV
+  L3_LDM  -> papi_L3_LDM
+  L3_STM  -> papi_L3_STM
+  BRU_IDL -> papi_BRU_IDL
+  FXU_IDL -> papi_FXU_IDL
+  FPU_IDL -> papi_FPU_IDL
+  LSU_IDL -> papi_LSU_IDL
+  TLB_DM  -> papi_TLB_DM
+  TLB_IM  -> papi_TLB_IM
+  TLB_TL  -> papi_TLB_TL
+  L1_LDM  -> papi_L1_LDM
+  L1_STM  -> papi_L1_STM
+  L2_LDM  -> papi_L2_LDM
+  L2_STM  -> papi_L2_STM
+  BTAC_M  -> papi_BTAC_M
+  PRF_DM  -> papi_PRF_DM
+  L3_DCH  -> papi_L3_DCH
+  TLB_SD  -> papi_TLB_SD
+  CSR_FAL -> papi_CSR_FAL
+  CSR_SUC -> papi_CSR_SUC
+  CSR_TOT -> papi_CSR_TOT
+  MEM_SCY -> papi_MEM_SCY
+  MEM_RCY -> papi_MEM_RCY
+  MEM_WCY -> papi_MEM_WCY
+  STL_ICY -> papi_STL_ICY
+  FUL_ICY -> papi_FUL_ICY
+  STL_CCY -> papi_STL_CCY
+  FUL_CCY -> papi_FUL_CCY
+  HW_INT  -> papi_HW_INT
+  BR_UCN  -> papi_BR_UCN
+  BR_CN   -> papi_BR_CN
+  BR_TKN  -> papi_BR_TKN
+  BR_NTK  -> papi_BR_NTK
   BR_MSP  -> papi_BR_MSP
+  BR_PRC  -> papi_BR_PRC
+  FMA_INS -> papi_FMA_INS
+  TOT_IIS -> papi_TOT_IIS
+  TOT_INS -> papi_TOT_INS
+  INT_INS -> papi_INT_INS
+  FP_INS  -> papi_FP_INS
+  LD_INS  -> papi_LD_INS
+  SR_INS  -> papi_SR_INS
+  BR_INS  -> papi_BR_INS
+  VEC_INS -> papi_VEC_INS
+  RES_STL -> papi_RES_STL
+  FP_STAL -> papi_FP_STAL
+  TOT_CYC -> papi_TOT_CYC
+  LST_INS -> papi_LST_INS
+  SYC_INS -> papi_SYC_INS
+  L1_DCH  -> papi_L1_DCH
+  L2_DCH  -> papi_L2_DCH
+  L1_DCA  -> papi_L1_DCA
+  L2_DCA  -> papi_L2_DCA
+  L3_DCA  -> papi_L3_DCA
+  L1_DCR  -> papi_L1_DCR
+  L2_DCR  -> papi_L2_DCR
+  L3_DCR  -> papi_L3_DCR
+  L1_DCW  -> papi_L1_DCW
+  L2_DCW  -> papi_L2_DCW
+  L3_DCW  -> papi_L3_DCW
+  L1_ICH  -> papi_L1_ICH
+  L2_ICH  -> papi_L2_ICH
+  L3_ICH  -> papi_L3_ICH
+  L1_ICA  -> papi_L1_ICA
+  L2_ICA  -> papi_L2_ICA
+  L3_ICA  -> papi_L3_ICA
+  L1_ICR  -> papi_L1_ICR
+  L2_ICR  -> papi_L2_ICR
+  L3_ICR  -> papi_L3_ICR
+  L1_ICW  -> papi_L1_ICW
+  L2_ICW  -> papi_L2_ICW
+  L3_ICW  -> papi_L3_ICW
+  L1_TCH  -> papi_L1_TCH
+  L2_TCH  -> papi_L2_TCH
+  L3_TCH  -> papi_L3_TCH
+  L1_TCA  -> papi_L1_TCA
+  L2_TCA  -> papi_L2_TCA
+  L3_TCA  -> papi_L3_TCA
+  L1_TCR  -> papi_L1_TCR
+  L2_TCR  -> papi_L2_TCR
+  L3_TCR  -> papi_L3_TCR
+  L1_TCW  -> papi_L1_TCW
+  L2_TCW  -> papi_L2_TCW
+  L3_TCW  -> papi_L3_TCW
+  FML_INS -> papi_FML_INS
+  FAD_INS -> papi_FAD_INS
+  FDV_INS -> papi_FDV_INS
+  FSQ_INS -> papi_FSQ_INS
+  FNV_INS -> papi_FNV_INS
+
 
 ----------------------------------------------------------------
 --
