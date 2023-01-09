@@ -5,10 +5,33 @@
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE TypeApplications           #-}
 -- |
-module Test.Tasty.PAPI where
+-- Benchmark framework which uses CPU instruction counting instead of
+-- time measurement. This approach is much more deterministic and not
+-- subject to variation caused by concurrent execution of other
+-- programs.
+--
+-- Hardware counters are accessed using
+-- [PAPI](https://icl.utk.edu/papi/). Thus OS and hardware support
+-- inherited from that library.
+module Test.Tasty.PAPI
+  ( -- * Running benchmarks
+    Test.Tasty.PAPI.defaultMain
+  , Benchmark
+  , Benchmarkable(..)
+  , bench
+  , bgroup
+    -- * Creation of Benchmarkable
+  , nf
+  , whnf
+  , nfIO
+  , whnfIO
+    -- * Data types
+  , Counter(..)
+  ) where
 
 import Control.Exception
 import Control.Monad
+import Control.DeepSeq
 import Control.Concurrent.STM
 import Data.List       (nub, intercalate)
 import Data.Proxy
@@ -95,16 +118,12 @@ withPapiEventSet action = do
         poke p_evt evt
         call $ papi_destroy_eventset p_evt
 
-
-----------------------------------------------------------------
---
-----------------------------------------------------------------
-
+-- | Supported hardware counters
 data Counter
-  = TOT_INS
-  | FP_INS
-  | BR_INS
-  | BR_MSP
+  = TOT_INS  -- ^ Total instruction count
+  | FP_INS   -- ^ Number of floating point instructions
+  | BR_INS   -- ^ Number of branch instructions
+  | BR_MSP   -- ^ Number of branch mispredictions
   deriving (Show,Read,Eq,Ord)
 
 toCounter :: Counter -> CInt
@@ -113,6 +132,11 @@ toCounter = \case
   FP_INS  -> papi_FP_INS
   BR_INS  -> papi_BR_INS
   BR_MSP  -> papi_BR_MSP
+
+----------------------------------------------------------------
+--
+----------------------------------------------------------------
+
 
 
 newtype CsvPath = CsvPath FilePath
@@ -141,11 +165,25 @@ instance IsOption CounterSet where
         _            -> Nothing
 
 
-newtype Benchmark = Benchmark (IO ())
+----------------------------------------------------------------
+-- Running benchmarks
+----------------------------------------------------------------
 
-instance IsTest Benchmark where
+-- | Just a 'TestTree'. This type synonym is provided for source compatibility with 
+--   @criterion@ and @gauge@.
+--
+-- @since 0.1
+type Benchmark = TestTree
+
+-- | IO action which could be benchmarked. It's created by 'whnf',
+--   'nf', 'whnfIO', 'nfIO'.
+--
+-- @since 0.1
+newtype Benchmarkable = Benchmarkable (IO ())
+
+instance IsTest Benchmarkable where
   testOptions = pure []
-  run opts (Benchmark io) _
+  run opts (Benchmarkable io) _
     | 1 == n_threads = do
         withPapiEventSet $ \evt -> do
           forM_ counters $ call . papi_add_event evt . toCounter
@@ -190,20 +228,67 @@ showN n
   | otherwise = printf "%.3e" x
   where x = fromIntegral n :: Double
 
-whnf :: (a -> b) -> a -> Benchmark
-whnf f a = Benchmark $ do _ <- evaluate (f a)
-                          return ()
-
-bench :: String -> Benchmark -> TestTree
+-- | Create single benchmark. This is just a monomorphization of
+--   'singleTest' which provides API compatibility with @criterion@
+--   and @gauge@.
+--
+-- @since 0.1
+bench :: String -> Benchmarkable -> TestTree
 bench = singleTest
 
+-- | Create single benchmark. This is just a 'testGroup' and it exists
+--   to provide API compatibility with @criterion@ and @gauge@.
+--
+-- @since 0.1
+bgroup :: String -> [Benchmark] -> Benchmark
+bgroup = testGroup
 
-defaultMainPAPI :: TestTree -> IO ()
-defaultMainPAPI = defaultMainWithIngredients
-  [ listingTests
-  , consoleBenchReporter `composeReporters` csvReporter
-  ]
+-- | @nf f x@ measures number of instructions needed to compute normal
+--   form of and application of @f@ to @x@. 
+--
+-- @since 0.1
+nf :: NFData b => (a -> b) -> a -> Benchmarkable
+nf f a = Benchmarkable $ do _ <- evaluate $ force (f a)
+                            return ()
 
+-- | @nf f x@ measures number of instructions needed to compute weak
+--   head normal form of and application of @f@ to @x@.
+--
+-- @since 0.1
+whnf :: (a -> b) -> a -> Benchmarkable
+whnf f a = Benchmarkable $ do _ <- evaluate (f a)
+                              return ()
+
+-- | @whnfIO a@ measures number of instructions needed to evaluate IO
+--   action and reduce value returned by it to weak head normal form.
+--
+-- @since 0.1
+whnfIO :: IO a -> Benchmarkable
+whnfIO io = Benchmarkable $ do _ <- evaluate =<< io
+                               return ()
+-- | @nfIO a@ measures number of instructions needed to evaluate IO
+--   action and reduce value returned by it to normal form.
+--
+-- @since 0.1
+nfIO :: NFData a => IO a -> Benchmarkable
+nfIO io = Benchmarkable $ do a <- io
+                             _ <- evaluate (force a)
+                             return ()
+
+-- | Run benchmark suite. It provides API compatible with @criterion@ and @gauge@.
+--
+-- @since 0.1
+defaultMain :: [TestTree] -> IO ()
+defaultMain
+  = defaultMainWithIngredients [ listingTests
+                               , consoleBenchReporter `composeReporters` csvReporter
+                               ]
+  . testGroup "All"
+
+
+----------------------------------------------------------------
+-- Reporters
+----------------------------------------------------------------
 
 consoleBenchReporter :: Ingredient
 consoleBenchReporter = consoleTestReporterWithHook $ \_ r -> do
