@@ -4,15 +4,70 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE TypeApplications           #-}
--- |
--- Benchmark framework which uses CPU instruction counting instead of
--- time measurement. This approach is much more deterministic and not
--- subject to variation caused by concurrent execution of other
--- programs.
---
--- Hardware counters are accessed using
--- [PAPI](https://icl.utk.edu/papi/). Thus OS and hardware support
--- inherited from that library.
+{- |
+Module:      Test.Tasty.PAPI
+Copyright:   (c) 2023 Alexey Khudyakov
+Licence:     BSD3
+
+Benchmark framework which uses CPU instruction counting instead of
+time measurement. This approach is much more deterministic and not
+subject to variation caused by concurrent execution of other
+programs.
+
+Hardware counters are accessedusing
+[PAPI](https://icl.utk.edu/papi/). Thus OS and hardware support
+inherited from that library.
+
+
+=== How to use
+
+Library uses standard approach for benchmarks. So example benchmarks
+looks similar to one using @criterion@, @gauge@ or @test-bench@:
+
+> module Main where
+> import Test.Tasty.PAPI
+> 
+> main :: IO ()
+> main = defaultMain
+>   [ bench "6" $ whnf fib 6
+>   , bench "7" $ whnf fib 7
+>   , bench "8" $ whnf fib 8
+>   ]
+> 
+> fib :: Integer -> Integer
+> fib 0 = 0
+> fib 1 = 1
+> fib n = fib (n-1) + fib (n-2)
+
+Its output is:
+
+> All
+>   6:  OK (0.03s)
+>     ALLOC=600   TOT_INS=3753    BR_INS=918      BR_MSP=76
+>   7:  OK
+>     ALLOC=984   TOT_INS=5770    BR_INS=1410     BR_MSP=75
+>   8:  OK
+>     ALLOC=1608  TOT_INS=9046    BR_INS=2209     BR_MSP=88
+
+=== Command line optiosn
+
+Use @--help@ to list command-line options. Below is list of options
+provided by this package:
+
+[@--csv@ @PATH@]
+
+    Write benchmark results into file in CSV format.
+
+[@--counters@ @COUNTER_SET@]
+
+    Adjust set of hardware counters to use. Refer to 'Counter' for
+    documentation on supported counters. By default 'TOT_INS',
+    'BR_INS', 'BR_MSP' are measured. @--counters INT_INS,FP_INS@ will
+    *add* 'INT_INS' and 'FP_INS' to default set. @--counters
+    =INT_INS,FP_INS@ will use only list of provided counters. Note
+    that counter may or may not be supported on you CPU and there
+    could be limit on number of counters used simultaneously.
+-}
 module Test.Tasty.PAPI
   ( -- * Running benchmarks
     Test.Tasty.PAPI.defaultMain
