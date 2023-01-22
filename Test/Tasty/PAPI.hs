@@ -616,6 +616,7 @@ bgroup = testGroup
 --
 -- @since 0.1
 nf :: NFData b => (a -> b) -> a -> Benchmarkable
+{-# NOINLINE nf #-}
 nf f a = Benchmarkable $ do _ <- evaluate $ force (f a)
                             return ()
 
@@ -624,6 +625,7 @@ nf f a = Benchmarkable $ do _ <- evaluate $ force (f a)
 --
 -- @since 0.1
 whnf :: (a -> b) -> a -> Benchmarkable
+{-# NOINLINE whnf #-}
 whnf f a = Benchmarkable $ do _ <- evaluate (f a)
                               return ()
 
@@ -632,6 +634,7 @@ whnf f a = Benchmarkable $ do _ <- evaluate (f a)
 --
 -- @since 0.1
 whnfIO :: IO a -> Benchmarkable
+{-# NOINLINE whnfIO #-}
 whnfIO io = Benchmarkable $ do _ <- evaluate =<< io
                                return ()
 -- | @nfIO a@ measures number of instructions needed to evaluate IO
@@ -639,6 +642,7 @@ whnfIO io = Benchmarkable $ do _ <- evaluate =<< io
 --
 -- @since 0.1
 nfIO :: NFData a => IO a -> Benchmarkable
+{-# NOINLINE nfIO #-}
 nfIO io = Benchmarkable $ do a <- io
                              _ <- evaluate (force a)
                              return ()
