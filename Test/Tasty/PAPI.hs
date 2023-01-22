@@ -42,12 +42,13 @@ looks similar to one using @criterion@, @gauge@ or @test-bench@:
 Its output is:
 
 > All
->   6:  OK (0.03s)
->     ALLOC=600   TOT_INS=3753    BR_INS=918      BR_MSP=76
->   7:  OK
->     ALLOC=984   TOT_INS=5770    BR_INS=1410     BR_MSP=75
->   8:  OK
->     ALLOC=1608  TOT_INS=9046    BR_INS=2209     BR_MSP=88
+>   6:                OK
+>     ALLOC=528  TOT_INS=4768    TOT_CYC=6114    BR_INS=1128     BR_MSP=74
+>   7:                OK
+>     ALLOC=864  TOT_INS=7431    TOT_CYC=6631    BR_INS=1744     BR_MSP=70
+>   8:                OK
+>     ALLOC=1408 TOT_INS=11.75e3 TOT_CYC=8540    BR_INS=2743     BR_MSP=93
+
 
 === Command line optiosn
 
@@ -61,7 +62,7 @@ provided by this package:
 [@--counters@ @COUNTER_SET@]
 
     Adjust set of hardware counters to use. Refer to 'Counter' for
-    documentation on supported counters. By default 'TOT_INS',
+    documentation on supported counters. By default 'TOT_INS', 'TOT_CYC',
     'BR_INS', 'BR_MSP' are measured. @--counters INT_INS,FP_INS@ will
     *add* 'INT_INS' and 'FP_INS' to default set. @--counters
     =INT_INS,FP_INS@ will use only list of provided counters. Note
@@ -505,7 +506,7 @@ instance IsOption (Maybe CsvPath) where
 newtype CounterSet = CounterSet { getCounterSet :: [Counter] }
 
 instance IsOption CounterSet where
-  defaultValue = CounterSet [TOT_INS, BR_INS, BR_MSP]
+  defaultValue = CounterSet [TOT_INS, TOT_CYC, BR_INS, BR_MSP]
   optionName = pure "counters"
   optionHelp = pure "Adjust set of counters to use"
   parseValue = \case
