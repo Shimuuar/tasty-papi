@@ -542,6 +542,15 @@ instance IsTest Benchmarkable where
         withPapiEventSet $ \evt -> do
           forM_ counters $ call . papi_add_event evt . toCounter
           allocaArray (length counters) $ \vals -> do
+            -- Evaluate benchmark once in order to ensure that all
+            -- parameters are evaluated. Consider benchmarks
+            --
+            -- > bench "A" $ nf funA xs
+            -- > bench "B" $ nf funB xs
+            --
+            -- Without calling `io' we'll count instruction needed to
+            -- evaluate xs as well!
+            io
             -- We don't want to GC happen in the middle of benchmark
             -- just because previous benchmarks allocated enough to
             -- trigger it. This could bias measurement a lot since we
