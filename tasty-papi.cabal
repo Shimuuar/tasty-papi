@@ -1,13 +1,13 @@
 name:          tasty-papi
-version:       0.1
+version:       0.1.0.1
 cabal-version: 1.18
 license:       BSD3
 license-file:  LICENSE
 copyright:     2023, Alexey Khudyakov
 author:        Alexey Khudyakov <alexey.skladnoy@gmail.com>
 maintainer:    Alexey Khudyakov <alexey.skladnoy@gmail.com>
-homepage:      https://github.com/Shimuuar/tasty-bench
-bug-reports:   https://github.com/Bodigrim/tasty-bench/issues
+homepage:      https://github.com/Shimuuar/tasty-papi
+bug-reports:   https://github.com/Shimuuar/tasty-papi/issues
 category:      Development, Performance, Testing, Benchmarking
 build-type:    Simple
 
