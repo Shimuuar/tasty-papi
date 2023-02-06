@@ -253,14 +253,14 @@ foreign import capi unsafe "papi.h PAPI_strerror"
   papi_strerror :: CInt -> IO CString
 
 -- Call PAPI function and return error code
-call :: IO CInt -> IO ()
-call f = f >>= \case
+call :: String -> IO CInt -> IO ()
+call msg f = f >>= \case
   n | n == papi_OK -> pure ()
     | otherwise    -> do
         c_str <- papi_strerror n
         str   <- if | c_str == nullPtr -> pure "UNKNOWN ERROR"
                     | otherwise        -> peekCString c_str
-        error $ printf "PAPI call failed: %s [%s]" str (show n)
+        error $ printf "PAPI: %s: %s [%s]" msg str (show n)
 
 -- Create event set for use with PAPI
 withPapiEventSet :: (EventSet -> IO a) -> IO a
@@ -272,13 +272,13 @@ withPapiEventSet action = do
   where
     ini = alloca $ \p_evt -> do
       poke p_evt (EventSet papi_NULL)
-      call $ papi_create_eventset p_evt
+      call "Failed to create eventset" $ papi_create_eventset p_evt
       peek p_evt
     fini evt = do
-      call $ papi_cleanup_eventset evt
+      call "Failed to cleanup eventset" $ papi_cleanup_eventset evt
       alloca $ \p_evt -> do
         poke p_evt evt
-        call $ papi_destroy_eventset p_evt
+        call "Failed to destroy eventset" $ papi_destroy_eventset p_evt
 
 -- | Supported hardware counters
 -- 
@@ -549,7 +549,8 @@ instance IsTest Benchmarkable where
   run opts (Benchmarkable io) _
     | 1 == n_threads = do
         withPapiEventSet $ \evt -> do
-          forM_ counters $ call . papi_add_event evt . toCounter
+          forM_ counters $ \c -> do
+            call ("Failed to add counter " ++ show c) $ papi_add_event evt $ toCounter c
           allocaArray (length counters) $ \vals -> do
             -- Evaluate benchmark once in order to ensure that all
             -- parameters are evaluated. Consider benchmarks
@@ -567,9 +568,9 @@ instance IsTest Benchmarkable where
             performMajorGC
             n1 <- getAllocationCounter
             -- Perform measurement
-            call $ papi_start evt
+            call "Failed to start measurements" $ papi_start evt
             io
-            call $ papi_stop evt vals
+            call "Failed to stop measurements" $ papi_stop evt vals
             n2 <- getAllocationCounter
             let n_alloc = fromIntegral $ n1-n2
             -- Read data
