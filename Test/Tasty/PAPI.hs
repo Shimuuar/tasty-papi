@@ -691,7 +691,7 @@ csvReporter = TestReporter [Option (Proxy @(Maybe CsvPath)), Option (Proxy @Coun
                         ++ "' corresponds to two or more benchmarks. Please disambiguate them."
       withFile path WriteMode $ \h -> do
         hSetBuffering h LineBuffering
-        hPutStrLn h $ intercalate "," $ "ALLOC" : (show <$> counters)
+        hPutStrLn h $ intercalate "," $ "benchmark" : "ALLOC" : (show <$> counters)
         csvOutput h $ IM.intersectionWith (,) namesMap smap
       pure $ \_ -> isSuccessful smap
 
