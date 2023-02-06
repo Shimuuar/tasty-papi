@@ -3,6 +3,7 @@
 {-# LANGUAGE ForeignFunctionInterface   #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
+{-# LANGUAGE MultiWayIf                 #-}
 {-# LANGUAGE TypeApplications           #-}
 {- |
 Module:      Test.Tasty.PAPI
@@ -248,11 +249,18 @@ foreign import capi unsafe "papi.h PAPI_stop"
 -- foreign import capi unsafe "papi.h PAPI_reset"
 --   papi_reset :: CInt -> IO CInt
 
+foreign import capi unsafe "papi.h PAPI_strerror"
+  papi_strerror :: CInt -> IO CString
+
 -- Call PAPI function and return error code
 call :: IO CInt -> IO ()
 call f = f >>= \case
   n | n == papi_OK -> pure ()
-    | otherwise    -> error $ "PAPI call failed: " ++ show n
+    | otherwise    -> do
+        c_str <- papi_strerror n
+        str   <- if | c_str == nullPtr -> pure "UNKNOWN ERROR"
+                    | otherwise        -> peekCString c_str
+        error $ printf "PAPI call failed: %s [%s]" str (show n)
 
 -- Create event set for use with PAPI
 withPapiEventSet :: (EventSet -> IO a) -> IO a
