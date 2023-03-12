@@ -23,7 +23,7 @@ inherited from that library.
 === How to use
 
 Library uses standard approach for benchmarks. So example benchmarks
-looks similar to one using @criterion@, @gauge@ or @test-bench@:
+looks similar to one using @criterion@, @gauge@ or @tasty-bench@:
 
 > module Main where
 > import Test.Tasty.PAPI
