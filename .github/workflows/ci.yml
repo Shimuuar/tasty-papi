@@ -18,14 +18,16 @@ jobs:
       matrix:
         include:
           ### -- Linux --
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "8.2.2"  }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "8.4.4"  }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "8.6.5"  }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "8.8.4"  }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "8.10.7" }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "9.0.2"  }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "9.2.5"  }
-          - { cabal: "3.6", os: ubuntu-latest,  ghc: "9.4.4"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "8.2.2"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "8.4.4"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "8.6.5"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "8.8.4"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "8.10.7" }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "9.0.2"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "9.2.8"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "9.4.7"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "9.6.2"  }
+          - { cabal: "3.10", os: ubuntu-latest,  ghc: "9.8.1"  }
       fail-fast: false
 
     steps:
@@ -34,19 +36,19 @@ jobs:
       run: |
         echo M1 ${{ matrix.ghc }}
     # ----------------
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     # ----------------
     - name: Install PAPI
       run: sudo apt-get install -y libpapi-dev
     # ----------------
-    - uses: haskell/actions/setup@v2
+    - uses: haskell-actions/setup@v2
       id: setup-haskell-cabal
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
         cabal-version: ${{ matrix.cabal }}
     # ----------------
-    - uses: actions/cache@v1
+    - uses: actions/cache@v3
       name: Cache ~/.cabal/store
       with:
         path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
