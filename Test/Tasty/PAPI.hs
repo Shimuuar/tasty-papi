@@ -72,7 +72,7 @@ provided by this package:
 -}
 module Test.Tasty.PAPI
   ( -- * Running benchmarks
-    Test.Tasty.PAPI.defaultMain
+    defaultMain
   , Benchmark
   , Benchmarkable(..)
   , bench
@@ -108,7 +108,7 @@ import System.Exit
 import System.IO
 import Text.Printf
 
-import Test.Tasty
+import Test.Tasty hiding (defaultMain)
 import Test.Tasty.Ingredients
 import Test.Tasty.Ingredients.ConsoleReporter
 import Test.Tasty.Options
