@@ -27,14 +27,14 @@ looks similar to one using @criterion@, @gauge@ or @tasty-bench@:
 
 > module Main where
 > import Test.Tasty.PAPI
-> 
+>
 > main :: IO ()
 > main = defaultMain
 >   [ bench "6" $ whnf fib 6
 >   , bench "7" $ whnf fib 7
 >   , bench "8" $ whnf fib 8
 >   ]
-> 
+>
 > fib :: Integer -> Integer
 > fib 0 = 0
 > fib 1 = 1
@@ -72,7 +72,7 @@ provided by this package:
 -}
 module Test.Tasty.PAPI
   ( -- * Running benchmarks
-    Test.Tasty.PAPI.defaultMain
+    defaultMain
   , Benchmark
   , Benchmarkable(..)
   , bench
@@ -82,6 +82,10 @@ module Test.Tasty.PAPI
   , whnf
   , nfIO
   , whnfIO
+    -- * Ingredients
+  , benchIngredients
+  , consoleBenchReporter
+  , csvReporter
     -- * Data types
   , Counter(..)
   ) where
@@ -104,7 +108,7 @@ import System.Exit
 import System.IO
 import Text.Printf
 
-import Test.Tasty
+import Test.Tasty hiding (defaultMain)
 import Test.Tasty.Ingredients
 import Test.Tasty.Ingredients.ConsoleReporter
 import Test.Tasty.Options
@@ -123,7 +127,7 @@ newtype EventSet = EventSet CInt
 foreign import capi "papi.h value PAPI_OK"          papi_OK          :: CInt
 foreign import capi "papi.h value PAPI_NULL"        papi_NULL        :: CInt
 foreign import capi "papi.h value PAPI_VER_CURRENT" papi_VER_CURRENT :: CInt
- 
+
 foreign import capi "papi.h value PAPI_L1_DCM"   papi_L1_DCM  :: CInt
 foreign import capi "papi.h value PAPI_L1_ICM"   papi_L1_ICM  :: CInt
 foreign import capi "papi.h value PAPI_L2_DCM"   papi_L2_DCM  :: CInt
@@ -281,7 +285,7 @@ withPapiEventSet action = do
         call "Failed to destroy eventset" $ papi_destroy_eventset p_evt
 
 -- | Supported hardware counters
--- 
+--
 -- Documentation is taken from rather outdated manual:
 -- https://icl.utk.edu/projects/papi/files/documentation/PAPI_USER_GUIDE_23.htm
 data Counter
@@ -662,9 +666,7 @@ nfIO io = Benchmarkable $ do a <- io
 -- @since 0.1
 defaultMain :: [TestTree] -> IO ()
 defaultMain
-  = defaultMainWithIngredients [ listingTests
-                               , consoleBenchReporter `composeReporters` csvReporter
-                               ]
+  = defaultMainWithIngredients benchIngredients
   . testGroup "All"
 
 
@@ -672,12 +674,28 @@ defaultMain
 -- Reporters
 ----------------------------------------------------------------
 
+-- | Standard set of ingredients which are used by 'defaultMain'
+--
+-- @since 0.1.2.0
+benchIngredients :: [Ingredient]
+benchIngredients =
+  [ listingTests
+  , consoleBenchReporter `composeReporters` csvReporter
+  ]
+
+-- | Reporter which prints results on benchmarks to stdout.
+--
+-- @since 0.1.2.0
 consoleBenchReporter :: Ingredient
 consoleBenchReporter = consoleTestReporterWithHook $ \_ r -> do
   case reads @[CLLong] $ resultDescription r of
     [(_,s)] -> pure r { resultDescription = s }
     _       -> pure r
 
+-- | Run benchmarks and save results in CSV format. It activates when
+--   @--csv@ FILE command line option is specified.
+--
+-- @since 0.1.2.0
 csvReporter :: Ingredient
 csvReporter = TestReporter [Option (Proxy @(Maybe CsvPath)), Option (Proxy @CounterSet)] $
   \opts tree -> do
