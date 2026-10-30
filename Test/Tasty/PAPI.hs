@@ -1,4 +1,5 @@
 {-# LANGUAGE CApiFFI                    #-}
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE ForeignFunctionInterface   #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -94,6 +95,12 @@ import Control.Exception
 import Control.Monad
 import Control.DeepSeq
 import Control.Concurrent.STM
+import Control.Concurrent (yield)
+#if MIN_VERSION_base(4,18,0)
+import Control.Concurrent (myThreadId)
+import GHC.Conc (ThreadStatus(..), threadStatus)
+import GHC.Conc.Sync (listThreads)
+#endif
 import Data.List       (nub, intercalate)
 import Data.Proxy
 import Data.Foldable
@@ -569,7 +576,12 @@ instance IsTest Benchmarkable where
             -- just because previous benchmarks allocated enough to
             -- trigger it. This could bias measurement a lot since we
             -- run bencmark only once
-            performMajorGC
+            --
+            -- In the non-threaded RTS every Haskell thread runs on this OS
+            -- thread, so PAPI counts whatever runs between start and stop:
+            -- let the finalizers the GC schedules, and any other thread
+            -- with work pending, run before counting.
+            settle
             n1 <- getAllocationCounter
             -- Perform measurement
             call "Failed to start measurements" $ papi_start evt
@@ -592,6 +604,32 @@ instance IsTest Benchmarkable where
     where
       n_threads = getNumThreads $ lookupOption opts
       counters  = getCounterSet $ lookupOption opts
+
+-- | Run a major GC, and while another Haskell thread is runnable, yield until
+--   none is and run the GC again, yielding at most 1000 times in all, so
+--   that counting starts right after a GC, whatever ran before it.  Before
+--   base 4.18, which has no 'listThreads': collect, yield once and collect.
+settle :: IO ()
+#if MIN_VERSION_base(4,18,0)
+settle = do
+  me <- myThreadId
+  let busy = do
+        ts <- listThreads
+        st <- mapM threadStatus (filter (/= me) ts)
+        pure (ThreadRunning `elem` st)
+      drain :: Int -> IO Int
+      drain k = do
+        b <- busy
+        if b && k > 0 then yield >> drain (k - 1) else pure k
+      loop :: Int -> IO ()
+      loop k = do
+        performMajorGC
+        b <- busy
+        when (b && k > 0) $ yield >> drain (k - 1) >>= loop
+  loop 1000
+#else
+settle = performMajorGC >> yield >> performMajorGC
+#endif
 
 showN :: CLLong -> String
 showN n
